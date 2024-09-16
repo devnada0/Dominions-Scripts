@@ -117,7 +117,7 @@ def simulate_collisions(our_chassis_value, opponent_chassis_value, num_trials=10
 
 def main():
     print("Dominions Collision Calculator")
-    print("This calculator simulates army collisions based on the rules from the Dominions game.")
+    print("This calculator simulates army collisions based on the rules from the game Dominions.")
     print("Refer to the Army Collision section at https://illwiki.com/dom5/map-movement for more information.\n")
 
     # Get user inputs with validation
