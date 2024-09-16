@@ -1,6 +1,6 @@
 """
 Dominions Collision Calculator
-This script simulates the army collision mechanics from the game Dominions, based on the rules described in the Army Collision section at:
+This Python script simulates the army collision mechanics from the game Dominions, based on the rules described in the Army Collision section at:
 https://illwiki.com/dom5/map-movement
 
 It calculates the percentage chance of winning a collision against an opponent's army when both armies are moving into each other,
