@@ -11,6 +11,23 @@ Usage:
 - Enter your opponent's army's chassis value.
 - Optionally, enter the number of simulations to run (default is 100,000).
 
+Example:
+
+Dominions Collision Calculator
+This calculator simulates army collisions based on the rules from the Dominions game.
+Refer to the Army Collision section at https://illwiki.com/dom5/map-movement for more information.
+
+Enter your chassis value: 4394
+Enter your opponent's chassis value: 850
+Enter the number of simulations to run (default is 100000): 
+
+Calculating, please wait...
+
+With your chassis value of 4394 and your opponent's chassis value of 850:
+You have approximately a 94.99% chance of winning the collision.
+You have approximately a 5.01% chance of losing the collision.
+There is approximately a 0.00% chance that both armies will slip past each other without engaging.
+
 Author: Devnada
 """
 
