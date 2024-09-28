@@ -1,3 +1,34 @@
+"""
+Dominions Patrol and Unrest Reduction Calculator
+
+Purpose:
+This Python script simulates the patrol process in the game Dominions to estimate the probability of detecting stealth units and reducing unrest in a province. Using in-game mechanics, the script calculates:
+
+-The chance of detecting stealth units based on stealth ability and patrol strength.
+-The average amount of unrest reduced during patrolling.
+-The standard deviation of unrest reduction, along with ranges for 1 and 2 standard deviations from the average.
+
+Functionality:
+
+-Estimates the probability of detecting stealth units.
+-Simulates the process of unrest reduction and provides statistical results.
+-Outputs the chance of detection, average unrest reduction, and the variability using standard deviation and deviation ranges.
+
+Installation:
+-The script requires Python 3.x and the NumPy library.
+
+Install Python:
+
+-Download from python.org.
+-Follow installation instructions for your operating system.
+-Install NumPy:
+
+Open a terminal or command prompt and run the following command:
+pip install numpy
+
+Author: Devnada
+"""
+
 import numpy as np
 
 def calculate_stealth_strength(leader_stealth_ability=40, units_under_command_lt50=0, units_under_command_ge50=0):
