@@ -1,44 +1,42 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Function to prompt for scout reports
-def get_scout_reports():
+# Function to prompt for scout reports with flexible delimiter (comma or space)
+def get_scout_reports(prompt_message):
     while True:
         try:
-            reports_input = input("Enter scout reports separated by commas (e.g., 60,80,70): ")
-            scout_reports = [int(x.strip()) for x in reports_input.split(',')]
-            if len(scout_reports) == 0:
-                raise ValueError
+            reports_input = input(prompt_message)
+            if not reports_input.strip():  # If left blank, return an empty list
+                return []
+            # Split by both commas and spaces, and filter out any empty strings
+            scout_reports = [int(x.strip()) for x in reports_input.replace(",", " ").split() if x.strip()]
             return scout_reports
         except ValueError:
-            print("Invalid input. Please enter integers separated by commas.")
+            print("Invalid input. Please enter integers separated by commas or spaces.")
 
-# Function to prompt for error percentage
-def get_error_percentage():
-    while True:
-        try:
-            error_input = input("Enter error percentage (default is 50): ")
-            if error_input.strip() == '':
-                return 50.0
-            error_percent = float(error_input)
-            if error_percent <= 0 or error_percent >= 100:
-                raise ValueError
-            return error_percent
-        except ValueError:
-            print("Invalid input. Please enter a number between 0 and 100.")
+# Get user inputs for both types of reports
+scout_reports_50 = get_scout_reports("Enter scout reports with 50% error separated by spaces or commas (leave blank for none): ")
+scout_reports_30 = get_scout_reports("Enter scout reports with 30% error separated by spaces or commas (leave blank for none): ")
 
-# Get user inputs
-scout_reports = get_scout_reports()
-error_percent = get_error_percentage()
+# Combine all reports for analysis, and record which type each report is
+all_scout_reports = [(report, 50) for report in scout_reports_50] + [(report, 30) for report in scout_reports_30]
 
-# Possible actual unit counts
-P = error_percent / 100  # Convert percentage to proportion
-min_report = min(scout_reports)
-max_report = max(scout_reports)
+# If there are no reports entered, exit the script
+if len(all_scout_reports) == 0:
+    print("No scout reports entered. Exiting script.")
+    exit()
 
-# Calculate N_min and N_max based on the error percentage and rounding
-N_min = int(np.floor((min_report / (1 + P)) / 10) * 10)
-N_max = int(np.ceil((max_report / (1 - P)) / 10) * 10)
+# Possible actual unit counts (based on the mix of reports)
+P_50 = 50 / 100  # Error rate for 50% reports
+P_30 = 30 / 100  # Error rate for 30% reports
+
+# Determine the overall min and max possible values based on both types of reports
+min_report = min([report for report, _ in all_scout_reports])
+max_report = max([report for report, _ in all_scout_reports])
+
+# Calculate N_min and N_max based on the maximum error rate (50%)
+N_min = int(np.floor((min_report / (1 + P_50)) / 10) * 10)
+N_max = int(np.ceil((max_report / (1 - P_50)) / 10) * 10)
 
 # Ensure N_min and N_max are within valid ranges
 N_min = max(N_min, 10)  # Minimum units cannot be less than 10
@@ -51,12 +49,12 @@ N_values = range(N_min, N_max + 10, 10)  # Consider multiples of 10
 # Initialize probability dictionary
 probabilities = {}
 
-# Function to calculate the probability of a reported unit given N
-def probability_of_report(N, reported_unit):
-    # The error percentage ranges uniformly from -P to +P
-    error_percentages = np.linspace(-P, P, 101)  # 101 values from -P to +P
+# Function to calculate the probability of a reported unit given N and an error percentage
+def probability_of_report(N, reported_unit, error_percent):
+    # The error percentage ranges uniformly from -error_percent to +error_percent
+    error_range = np.linspace(-error_percent, error_percent, 101)  # 101 values from -error_percent to +error_percent
     # Calculate possible reported units
-    possible_reports = N * (1 + error_percentages)
+    possible_reports = N * (1 + error_range)
     # Round to nearest multiple of 10
     possible_reports = 10 * np.round(possible_reports / 10)
     # Calculate the probability of each possible reported unit
@@ -71,8 +69,11 @@ def probability_of_report(N, reported_unit):
 for N in N_values:
     # Initialize total probability for N
     total_prob_N = 1
-    for report in scout_reports:
-        prob = probability_of_report(N, report)
+    for report, error_rate in all_scout_reports:
+        if error_rate == 50:
+            prob = probability_of_report(N, report, P_50)
+        elif error_rate == 30:
+            prob = probability_of_report(N, report, P_30)
         # If probability is zero, this N is not possible
         if prob == 0:
             total_prob_N = 0
@@ -108,4 +109,4 @@ if total_prob > 0:
     for N in sorted_N:
         print(f"Actual Units: {N}, Probability: {probabilities[N]:.6f}")
 else:
-    print("No possible actual unit counts could produce the given scout reports with the specified error percentage.")
+    print("No possible actual unit counts could produce the given scout reports with the specified error percentages.")
